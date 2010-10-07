@@ -93,6 +93,13 @@ class EJsTreeEx extends CJsTree {
         	),
 		);    	
 
+		$request = Yii::app()->getRequest();
+		if ($request->enableCsrfValidation) {
+			$csrfParam = ' , ' . $request->csrfTokenName . ': "' . $request->getCsrfToken() . '"';
+		} else {
+			$csrfParam = '';
+		}
+
 		$this->callback = array(
         	'beforedata'=>'js:function(NODE, TREE_OBJ) { return { id : $(NODE).attr("id") || 0 }; }', // 0 means its the first time to render the tree
         	'onmove'=>'js:function(NODE, REF_NODE, TYPE, TREE_OBJ, RB){
@@ -103,7 +110,7 @@ class EJsTreeEx extends CJsTree {
                 	type: "POST",
                 	async: false,
 					cache: false,
-                	data: ({id : NODE.id , ref_id : REF_NODE.id , type: TYPE }),
+                	data: ({id : NODE.id , ref_id : REF_NODE.id , type: TYPE' . $csrfParam . ' }),
                 	success: function( name ){
 						if(name){
                             $(NODE).children("a:eq(0)").html("<ins>&nbsp;</ins>"+name);
@@ -121,7 +128,7 @@ class EJsTreeEx extends CJsTree {
         	        type: "POST",
             	    async: false,
                 	cache: false,
-                	data: ({id : NODE.id , newname : TREE_OBJ.get_text(NODE)  }),
+                	data: ({id : NODE.id , newname : TREE_OBJ.get_text(NODE)' . $csrfParam . '  }),
                 	success: function(rnmreturn){
                     	rnm=rnmreturn;
                 	}
@@ -141,7 +148,7 @@ class EJsTreeEx extends CJsTree {
 						type: "POST",
 						async: false,
 						cache: false,
-						data: ({id : NODE.id }),
+						data: ({id : NODE.id' . $csrfParam . ' }),
 						success: function( dlsuccess ){
 							dl=dlsuccess;
 						}
@@ -164,7 +171,7 @@ class EJsTreeEx extends CJsTree {
 						type: "POST",
 						async: false,
 						cache: false,
-						data: ({ref_id : REF_NODE.id , type : TYPE }),
+						data: ({ref_id : REF_NODE.id , type : TYPE' . $csrfParam . ' }),
 						dataType: "json",
 						success: function( jsondata ){
 							if ( jsondata ) {
@@ -187,7 +194,7 @@ class EJsTreeEx extends CJsTree {
 					type: "POST",
 					async: false,
 					cache: false,
-					data: ({id : NODE.id , ref_id : REF_NODE.id , type: TYPE }),
+					data: ({id : NODE.id , ref_id : REF_NODE.id , type: TYPE' . $csrfParam . ' }),
 					dataType: "json",
 					success: function( ){
 							TREE_OBJ.refresh(NODE);
