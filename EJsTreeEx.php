@@ -78,7 +78,9 @@ class EJsTreeEx extends CJsTree {
 	);
 
 	function init(){
-		$this->buttons['create_root']['ajaxurl'] = $this->getController()->createUrl('createroot');
+		if (isset($this->buttons['create_root'])) {
+			$this->buttons['create_root']['ajaxurl'] = $this->getController()->createUrl('createroot');
+		}
 
 		$this->data = array(
         	'type' => 'json',
